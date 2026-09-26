@@ -6,7 +6,9 @@ import os
 db_url_env = os.getenv("DATABASE_URL", "")
 if db_url_env:
     if db_url_env.startswith("postgres://"):
-        db_url_env = db_url_env.replace("postgres://", "postgresql://", 1)
+        db_url_env = db_url_env.replace("postgres://", "postgresql+pg8000://", 1)
+    elif db_url_env.startswith("postgresql://") and not db_url_env.startswith("postgresql+pg8000://"):
+        db_url_env = db_url_env.replace("postgresql://", "postgresql+pg8000://", 1)
     DATABASE_URL = db_url_env
 else:
     if os.getenv("VERCEL"):
