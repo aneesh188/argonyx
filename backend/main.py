@@ -216,10 +216,18 @@ def get_regions(db: Session = Depends(get_db)):
     return {state: sorted(list(districts)) for state, districts in regions.items()}
 
 # --- ML Prediction Logic & Endpoints ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def load_ml_assets():
     try:
-        model = joblib.load('backend/best_model.joblib')
-        scaler = joblib.load('backend/scaler.joblib')
+        model_path = os.path.join(BASE_DIR, 'best_model.joblib')
+        scaler_path = os.path.join(BASE_DIR, 'scaler.joblib')
+        if not os.path.exists(model_path) or not os.path.exists(scaler_path):
+            parent_dir = os.path.dirname(BASE_DIR)
+            model_path = os.path.join(parent_dir, 'backend', 'best_model.joblib')
+            scaler_path = os.path.join(parent_dir, 'backend', 'scaler.joblib')
+        model = joblib.load(model_path)
+        scaler = joblib.load(scaler_path)
         return model, scaler
     except Exception as e:
         print(f"Error loading ML models: {e}")
@@ -228,8 +236,6 @@ def load_ml_assets():
 @app.post("/api/predict")
 def predict_pcod(req: PredictionRequest, authorization: Optional[str] = None, db: Session = Depends(get_db)):
     model, scaler = load_ml_assets()
-    if not model or not scaler:
-        raise HTTPException(status_code=500, detail="ML Model not trained yet. Deployer must run train_models.py first.")
     
     c = req.clinicalInputs
     s = req.symptoms
@@ -367,7 +373,8 @@ def predict_pcod(req: PredictionRequest, authorization: Optional[str] = None, db
     
     # Load dataset to get training means
     try:
-        train_df = pd.read_csv('backend/pcod_dataset.csv')
+        csv_path = os.path.join(BASE_DIR, 'pcod_dataset.csv')
+        train_df = pd.read_csv(csv_path)
         train_means = train_df.mean().to_dict()
     except Exception:
         # Clinical normal means fallback
@@ -1055,7 +1062,8 @@ def retrain_model_task():
         print("Starting automatic model retraining background task...")
         
         # Load synthetic baseline data
-        baseline_df = pd.read_csv('backend/pcod_dataset.csv')
+        csv_path = os.path.join(BASE_DIR, 'pcod_dataset.csv')
+        baseline_df = pd.read_csv(csv_path)
         
         # Convert new user assessments to training format
         new_records = []
@@ -1087,11 +1095,11 @@ def retrain_model_task():
         combined_df = pd.concat([baseline_df, new_df], ignore_index=True)
         
         # Save combined dataset back
-        combined_df.to_csv('backend/pcod_dataset.csv', index=False)
+        combined_df.to_csv(csv_path, index=False)
         
         # Trigger retraining
         from backend.train_models import load_and_preprocess_data, train_and_evaluate
-        X, y = load_and_preprocess_data('backend/pcod_dataset.csv')
+        X, y = load_and_preprocess_data(csv_path)
         train_and_evaluate(X, y)
         print("Automatic model retraining completed successfully!")
         

@@ -3,9 +3,16 @@ from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import datetime
 import os
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///backend/pcod_system.db")
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+db_url_env = os.getenv("DATABASE_URL", "")
+if db_url_env:
+    if db_url_env.startswith("postgres://"):
+        db_url_env = db_url_env.replace("postgres://", "postgresql://", 1)
+    DATABASE_URL = db_url_env
+else:
+    if os.getenv("VERCEL"):
+        DATABASE_URL = "sqlite:///" + os.path.join(os.environ.get("TMPDIR", "/tmp"), "pcod_system.db")
+    else:
+        DATABASE_URL = "sqlite:///backend/pcod_system.db"
 
 engine = create_engine(
     DATABASE_URL,
