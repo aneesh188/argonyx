@@ -9,7 +9,6 @@ passlib[bcrypt]
 pyjwt
 python-multipart
 python-dotenv
-google-generativeai
 openai
 anthropic
 pg8000

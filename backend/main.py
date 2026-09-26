@@ -46,11 +46,14 @@ app.add_middleware(
 SECRET_KEY = os.getenv("JWT_SECRET", "super_secret_pcos_key_123_secure_32bytes_key")
 ALGORITHM = "HS256"
 
-# Load Gemini API Key
+# Load Gemini API Key if available
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 if GEMINI_API_KEY:
-    import google.generativeai as genai
-    genai.configure(api_key=GEMINI_API_KEY)
+    try:
+        import google.generativeai as genai
+        genai.configure(api_key=GEMINI_API_KEY)
+    except Exception:
+        pass
 
 # Dependency to get DB session
 def get_db():
