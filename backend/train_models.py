@@ -6,7 +6,11 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC
-from xgboost import XGBClassifier
+try:
+    from xgboost import XGBClassifier
+    HAS_XGBOOST = True
+except ImportError:
+    HAS_XGBOOST = False
 import joblib
 import os
 
@@ -78,12 +82,13 @@ def train_and_evaluate(X, y):
     
     # Define models
     models = {
-        'Logistic Regression': LogisticRegression(max_iter=1000, random_state=42),
+        'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42),
         'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
-        'XGBoost': XGBClassifier(n_estimators=100, learning_rate=0.05, max_depth=4, eval_metric='logloss', random_state=42),
-        'Support Vector Machine': SVC(probability=True, random_state=42),
-        'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42)
+        'Logistic Regression': LogisticRegression(max_iter=1000, random_state=42),
+        'Support Vector Machine': SVC(probability=True, random_state=42)
     }
+    if HAS_XGBOOST:
+        models['XGBoost'] = XGBClassifier(n_estimators=100, learning_rate=0.05, max_depth=4, eval_metric='logloss', random_state=42)
     
     results = {}
     best_model_name = None

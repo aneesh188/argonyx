@@ -1,12 +1,12 @@
 Model Performance Comparison
 ============================
 
-Model: Logistic Regression
-  Accuracy: 0.8725
-  Precision: 0.8750
-  Recall: 0.8187
-  F1-score: 0.8459
-  ROC-AUC: 0.9563
+Model: Gradient Boosting
+  Accuracy: 0.8900
+  Precision: 0.8994
+  Recall: 0.8363
+  F1-score: 0.8667
+  ROC-AUC: 0.9597
 
 Model: Random Forest
   Accuracy: 0.8425
@@ -15,12 +15,12 @@ Model: Random Forest
   F1-score: 0.8037
   ROC-AUC: 0.9402
 
-Model: XGBoost
-  Accuracy: 0.8875
-  Precision: 0.8938
-  Recall: 0.8363
-  F1-score: 0.8640
-  ROC-AUC: 0.9564
+Model: Logistic Regression
+  Accuracy: 0.8725
+  Precision: 0.8750
+  Recall: 0.8187
+  F1-score: 0.8459
+  ROC-AUC: 0.9563
 
 Model: Support Vector Machine
   Accuracy: 0.8425
@@ -29,11 +29,11 @@ Model: Support Vector Machine
   F1-score: 0.8097
   ROC-AUC: 0.9408
 
-Model: Gradient Boosting
-  Accuracy: 0.8900
-  Precision: 0.8994
+Model: XGBoost
+  Accuracy: 0.8875
+  Precision: 0.8938
   Recall: 0.8363
-  F1-score: 0.8667
-  ROC-AUC: 0.9597
+  F1-score: 0.8640
+  ROC-AUC: 0.9564
 
 Best Model: Gradient Boosting (F1-score: 0.8667)
